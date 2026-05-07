@@ -91,9 +91,12 @@ module.exports = async function handler(req, res) {
       price_spread: row.PRICE_SPREAD
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Server error" });
-  } finally {
-    connection.destroy();
-  }
+  console.error(error);
+
+  return res.status(500).json({
+    error: "Server error",
+    message: error.message,
+    code: error.code || null
+  });
+}
 };
