@@ -1,10 +1,13 @@
 const snowflake = require("snowflake-sdk");
+const privateKey = process.env.SNOWFLAKE_PRIVATE_KEY
+  ? process.env.SNOWFLAKE_PRIVATE_KEY.replace(/\\n/g, "\n")
+  : undefined;
 
 return snowflake.createConnection({
   account: process.env.SNOWFLAKE_ACCOUNT,
   username: process.env.SNOWFLAKE_USERNAME,
   authenticator: "SNOWFLAKE_JWT",
-  privateKey: process.env.SNOWFLAKE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+  privateKey: privateKey,
   warehouse: process.env.SNOWFLAKE_WAREHOUSE,
   database: "CARESAVER_MARKETING",
   schema: "PUBLIC_SEARCH",
