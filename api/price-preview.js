@@ -1,18 +1,20 @@
 const snowflake = require("snowflake-sdk");
+
 const privateKey = process.env.SNOWFLAKE_PRIVATE_KEY
   ? process.env.SNOWFLAKE_PRIVATE_KEY.replace(/\\n/g, "\n")
   : undefined;
 
-return snowflake.createConnection({
-  account: process.env.SNOWFLAKE_ACCOUNT,
-  username: process.env.SNOWFLAKE_USERNAME,
-  authenticator: "SNOWFLAKE_JWT",
-  privateKey: privateKey,
-  warehouse: process.env.SNOWFLAKE_WAREHOUSE,
-  database: "CARESAVER_MARKETING",
-  schema: "PUBLIC_SEARCH",
-  role: process.env.SNOWFLAKE_ROLE
-});
+function createConnection() {
+  return snowflake.createConnection({
+    account: process.env.SNOWFLAKE_ACCOUNT,
+    username: process.env.SNOWFLAKE_USERNAME,
+    authenticator: "SNOWFLAKE_JWT",
+    privateKey: privateKey,
+    warehouse: process.env.SNOWFLAKE_WAREHOUSE,
+    database: "CARESAVER_MARKETING",
+    schema: "PUBLIC_SEARCH",
+    role: process.env.SNOWFLAKE_ROLE
+  });
 }
 
 function executeQuery(connection, sqlText, binds) {
@@ -94,12 +96,14 @@ module.exports = async function handler(req, res) {
       price_spread: row.PRICE_SPREAD
     });
   } catch (error) {
-  console.error(error);
-
-  return res.status(500).json({
-    error: "Server error",
-    message: error.message,
-    code: error.code || null
-  });
-}
+    return res.status(500).json({
+      error: "Server error",
+      message: error.message,
+      code: error.code || null
+    });
+  } finally {
+    try {
+      connection.destroy();
+    } catch (e) {}
+  }
 };
