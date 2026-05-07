@@ -4,7 +4,7 @@ return snowflake.createConnection({
   account: process.env.SNOWFLAKE_ACCOUNT,
   username: process.env.SNOWFLAKE_USERNAME,
   authenticator: "SNOWFLAKE_JWT",
-  privateKey: process.env.SNOWFLAKE_PRIVATE_KEY,
+  privateKey: process.env.SNOWFLAKE_PRIVATE_KEY.replace(/\\n/g, "\n"),
   warehouse: process.env.SNOWFLAKE_WAREHOUSE,
   database: "CARESAVER_MARKETING",
   schema: "PUBLIC_SEARCH",
